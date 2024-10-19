@@ -55,6 +55,11 @@ public class CharController_Motor : MonoBehaviour {
 
 		Vector3 movement = new Vector3 (moveFB, gravity, moveLR);
 
+		// Normalizamos el vector de movimiento en el plano XZ para que no sume velocidad
+		if (movement.x != 0 || movement.z != 0)
+		{
+			movement = movement.normalized * speed;
+		}
 
 
 		if (webGLRightClickRotation) {
