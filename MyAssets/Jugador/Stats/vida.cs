@@ -17,7 +17,7 @@ public class vida : MonoBehaviour
         r = bloodyEfectImage.color.r;
         g = bloodyEfectImage.color.g;
         b = bloodyEfectImage.color.b;
-        a = bloodyEfectImage.color.a;
+        a = 0f;
         d = 100 - value;
     }
 
@@ -27,7 +27,6 @@ public class vida : MonoBehaviour
         if (value != 100) {
             a = 1 - (0.01f * (d));
         }
-
         Math.Clamp(a,0,1f);
         changeColor();
     }
