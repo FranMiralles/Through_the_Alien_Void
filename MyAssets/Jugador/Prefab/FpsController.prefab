@@ -121,7 +121,7 @@ GameObject:
   - component: {fileID: 114384212370659330}
   m_Layer: 0
   m_Name: FpsController
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -227,11 +227,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 1666093525517832}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 92b06533d6fbd4e4393f492cb0cb5694, type: 3}
+  m_Script: {fileID: 11500000, guid: 3bb437ea03db2934088899a110638699, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 6
-  sensitivity: 50
+  speed: 10
+  sensitivity: 30
   WaterHeight: 15.5
   cam: {fileID: 1198389065402468}
   webGLRightClickRotation: 1
