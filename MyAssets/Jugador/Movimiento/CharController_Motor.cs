@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CharController_Motor : MonoBehaviour {
+public class CharController : MonoBehaviour {
 
 	public float speed = 10.0f;
 	public float sensitivity = 30.0f;
