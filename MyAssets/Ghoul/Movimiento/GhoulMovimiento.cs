@@ -6,7 +6,7 @@ using UnityEngine.AI;
 public class GhoulMovimiento : MonoBehaviour
 {
     public Transform[] puntosPatrulla;
-    public float velocidad;
+    private float velocidad = 4;
     public NavMeshAgent navAgent;
     private float tiempoEspera = 5f;
 
@@ -16,8 +16,9 @@ public class GhoulMovimiento : MonoBehaviour
     private Animator animator;
 
     public Transform jugador; // Referencia al jugador
-    private float rangoDeteccion = 12f; // Distancia a la que detecta al jugador
+    private float rangoDeteccion = 10f; // Distancia a la que detecta al jugador
     private float anguloVision = 120f; // Ángulo del campo de visión del enemigo
+    private bool persiguiendo = false;
 
     void Start()
     {
@@ -34,14 +35,14 @@ public class GhoulMovimiento : MonoBehaviour
 
     void Update()
     {
-        if (!esperando && navAgent.remainingDistance < 0.5f && !navAgent.pathPending)
+        if (!persiguiendo && !esperando && navAgent.remainingDistance < 0.5f && !navAgent.pathPending)
         {
             StartCoroutine(EsperarYPasarAlSiguiente());
         }
 
-        if(JugadorEnCampoDeVision() && JugadorVisible())
+        if((JugadorEnCampoDeVision() && JugadorVisible()) || persiguiendo)
         {
-            Debug.Log("Atacar");
+            StartCoroutine(PerseguirAlJugador());
         }
     }
 
@@ -86,6 +87,7 @@ public class GhoulMovimiento : MonoBehaviour
     {
         esperando = true;
         animator.SetBool("run", false);
+        navAgent.stoppingDistance = 0;
 
         // Cambiar al siguiente punto de patrullaje (antes de rotar)
         indiceActual = (indiceActual + 1) % puntosPatrulla.Length;
@@ -111,11 +113,23 @@ public class GhoulMovimiento : MonoBehaviour
 
         // Espera durante el tiempo especificado
         yield return new WaitForSeconds(tiempoEspera);
+        if (!persiguiendo)
+        {
+            // Moverse al siguiente punto de patrullaje
+            animator.SetBool("run", true);
+            navAgent.SetDestination(puntosPatrulla[indiceActual].position);
 
-        // Moverse al siguiente punto de patrullaje
+            esperando = false; // Termina la espera
+        }
+    }
+
+    IEnumerator PerseguirAlJugador()
+    {
+        Debug.Log("ATAQUE");
+        persiguiendo = true;
         animator.SetBool("run", true);
-        navAgent.SetDestination(puntosPatrulla[indiceActual].position);
-
-        esperando = false; // Termina la espera
+        navAgent.stoppingDistance = 4;
+        navAgent.SetDestination(jugador.position);
+        yield return null;
     }
 }
