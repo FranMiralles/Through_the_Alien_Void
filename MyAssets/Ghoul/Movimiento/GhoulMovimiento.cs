@@ -8,19 +8,23 @@ public class GhoulMovimiento : MonoBehaviour
     public Transform[] puntosPatrulla;
     public float velocidad;
     public NavMeshAgent navAgent;
-    public float tiempoEspera = 5f;
+    private float tiempoEspera = 5f;
 
     private int indiceActual = 0;
     private bool esperando = false;
 
     private Animator animator;
 
+    public Transform jugador; // Referencia al jugador
+    private float rangoDeteccion = 12f; // Distancia a la que detecta al jugador
+    private float anguloVision = 120f; // Ángulo del campo de visión del enemigo
+
     void Start()
     {
         animator = GetComponent<Animator>();
         // Inicializa la velocidad del NavMeshAgent
         navAgent.speed = velocidad;
-        
+
         if (puntosPatrulla.Length > 0)
         {
             // Ir al primer punto de patrullaje
@@ -32,10 +36,50 @@ public class GhoulMovimiento : MonoBehaviour
     {
         if (!esperando && navAgent.remainingDistance < 0.5f && !navAgent.pathPending)
         {
-            // Cuando llegue al punto actual, inicia la espera
-            Debug.Log("Cuando llegue al punto actual, inicia la espera");
             StartCoroutine(EsperarYPasarAlSiguiente());
         }
+
+        if(JugadorEnCampoDeVision() && JugadorVisible())
+        {
+            Debug.Log("Atacar");
+        }
+    }
+
+    bool JugadorEnCampoDeVision()
+    {
+        // 1. Verificar si el jugador está dentro del rango de detección
+        float distanciaAlJugador = Vector3.Distance(transform.position, jugador.position);
+        if (distanciaAlJugador > rangoDeteccion)
+        {
+            return false; // Está demasiado lejos
+        }
+
+        // 2. Calcular la dirección hacia el jugador
+        Vector3 direccionAlJugador = (jugador.position - transform.position).normalized;
+
+        // 3. Calcular el ángulo entre la dirección hacia el jugador y la dirección en la que mira el enemigo
+        float anguloEntreEnemigoYJugador = Vector3.Angle(transform.forward, direccionAlJugador);
+
+        // 4. Si el jugador está dentro del ángulo de visión, se considera visible
+        return anguloEntreEnemigoYJugador < anguloVision / 2f;
+    }
+
+    bool JugadorVisible()
+    {
+        // Realizar un Raycast hacia el jugador para verificar si hay algún obstáculo en el camino
+        Vector3 direccionAlJugador = (jugador.position - transform.position).normalized;
+        RaycastHit hit;
+
+        if (Physics.Raycast(transform.position, direccionAlJugador, out hit, rangoDeteccion))
+        {
+            // Si el Raycast golpea al jugador
+            if (hit.transform.gameObject.tag == "Player")
+            {
+                return true; // El jugador es visible
+            }
+        }
+
+        return false; // Hay algo bloqueando la visión
     }
 
     IEnumerator EsperarYPasarAlSiguiente()
@@ -57,7 +101,7 @@ public class GhoulMovimiento : MonoBehaviour
         // Girar hacia el próximo punto de manera progresiva
         while (tiempoRotacion < duracionRotacion)
         {
-            tiempoRotacion +=  Time.deltaTime;
+            tiempoRotacion += Time.deltaTime;
             transform.rotation = Quaternion.Slerp(transform.rotation, rotacionObjetivo, tiempoRotacion / duracionRotacion);
             yield return null; // Esperar hasta el siguiente frame
         }
