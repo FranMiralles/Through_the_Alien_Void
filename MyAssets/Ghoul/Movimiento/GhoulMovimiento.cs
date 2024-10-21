@@ -6,7 +6,7 @@ using UnityEngine.AI;
 public class GhoulMovimiento : MonoBehaviour
 {
     public Transform[] puntosPatrulla;
-    private float velocidad = 4;
+    private float velocidad = 5f;
     public NavMeshAgent navAgent;
     private float tiempoEspera = 5f;
 
@@ -17,18 +17,19 @@ public class GhoulMovimiento : MonoBehaviour
 
     public Transform jugador; // Referencia al jugador
     private float rangoDeteccion = 10f; // Distancia a la que detecta al jugador
-    private float anguloVision = 120f; // Ángulo del campo de visión del enemigo
+    private float anguloVision = 140f; // Ángulo del campo de visión del enemigo
     private bool persiguiendo = false;
+
+    private float distanciaAtaque = 2.5f; // Distancia a la que ataca al jugador
+    private bool atacando = false;
 
     void Start()
     {
         animator = GetComponent<Animator>();
-        // Inicializa la velocidad del NavMeshAgent
         navAgent.speed = velocidad;
 
         if (puntosPatrulla.Length > 0)
         {
-            // Ir al primer punto de patrullaje
             navAgent.SetDestination(puntosPatrulla[indiceActual].position);
         }
     }
@@ -40,47 +41,39 @@ public class GhoulMovimiento : MonoBehaviour
             StartCoroutine(EsperarYPasarAlSiguiente());
         }
 
-        if((JugadorEnCampoDeVision() && JugadorVisible()) || persiguiendo)
+        if ((JugadorEnCampoDeVision() && JugadorVisible()) || persiguiendo)
         {
-            StartCoroutine(PerseguirAlJugador());
+            StartCoroutine(PerseguirOAtacar());
         }
     }
 
     bool JugadorEnCampoDeVision()
     {
-        // 1. Verificar si el jugador está dentro del rango de detección
         float distanciaAlJugador = Vector3.Distance(transform.position, jugador.position);
         if (distanciaAlJugador > rangoDeteccion)
         {
-            return false; // Está demasiado lejos
+            return false;
         }
 
-        // 2. Calcular la dirección hacia el jugador
         Vector3 direccionAlJugador = (jugador.position - transform.position).normalized;
-
-        // 3. Calcular el ángulo entre la dirección hacia el jugador y la dirección en la que mira el enemigo
         float anguloEntreEnemigoYJugador = Vector3.Angle(transform.forward, direccionAlJugador);
-
-        // 4. Si el jugador está dentro del ángulo de visión, se considera visible
         return anguloEntreEnemigoYJugador < anguloVision / 2f;
     }
 
     bool JugadorVisible()
     {
-        // Realizar un Raycast hacia el jugador para verificar si hay algún obstáculo en el camino
         Vector3 direccionAlJugador = (jugador.position - transform.position).normalized;
         RaycastHit hit;
 
         if (Physics.Raycast(transform.position, direccionAlJugador, out hit, rangoDeteccion))
         {
-            // Si el Raycast golpea al jugador
             if (hit.transform.gameObject.tag == "Player")
             {
-                return true; // El jugador es visible
+                return true;
             }
         }
 
-        return false; // Hay algo bloqueando la visión
+        return false;
     }
 
     IEnumerator EsperarYPasarAlSiguiente()
@@ -89,47 +82,85 @@ public class GhoulMovimiento : MonoBehaviour
         animator.SetBool("run", false);
         navAgent.stoppingDistance = 0;
 
-        // Cambiar al siguiente punto de patrullaje (antes de rotar)
         indiceActual = (indiceActual + 1) % puntosPatrulla.Length;
 
-        // Calcula la dirección hacia el próximo punto
         Vector3 direccion = puntosPatrulla[indiceActual].position - transform.position;
         Quaternion rotacionObjetivo = Quaternion.LookRotation(direccion);
 
-        // Tiempo para interpolar la rotación
         float tiempoRotacion = 0f;
-        float duracionRotacion = 1f; // Duración total de la rotación en segundos
+        float duracionRotacion = 1f;
 
-        // Girar hacia el próximo punto de manera progresiva
         while (tiempoRotacion < duracionRotacion)
         {
             tiempoRotacion += Time.deltaTime;
             transform.rotation = Quaternion.Slerp(transform.rotation, rotacionObjetivo, tiempoRotacion / duracionRotacion);
-            yield return null; // Esperar hasta el siguiente frame
+            yield return null;
         }
 
-        // Asegurarse de que la rotación final es precisa
         transform.rotation = rotacionObjetivo;
 
-        // Espera durante el tiempo especificado
         yield return new WaitForSeconds(tiempoEspera);
         if (!persiguiendo)
         {
-            // Moverse al siguiente punto de patrullaje
             animator.SetBool("run", true);
             navAgent.SetDestination(puntosPatrulla[indiceActual].position);
-
-            esperando = false; // Termina la espera
+            esperando = false;
         }
     }
 
-    IEnumerator PerseguirAlJugador()
+    IEnumerator PerseguirOAtacar()
     {
-        Debug.Log("ATAQUE");
         persiguiendo = true;
         animator.SetBool("run", true);
-        navAgent.stoppingDistance = 4;
-        navAgent.SetDestination(jugador.position);
+        navAgent.stoppingDistance = distanciaAtaque - 1;
+
+        float distanciaAlJugador = Vector3.Distance(transform.position, jugador.position);
+
+        if (distanciaAlJugador <= distanciaAtaque && !atacando)
+        {
+            StartCoroutine(Atacar());
+        }
+        else
+        {
+            navAgent.SetDestination(jugador.position);
+        }
+
         yield return null;
+    }
+
+    IEnumerator Atacar()
+    {
+        atacando = true;
+        navAgent.isStopped = true; // Detener al enemigo mientras ataca
+        Debug.Log("ATACANDO AL JUGADOR");
+        // Activar animación de ataque
+        int ataqueAleatorio = Random.Range(0, 2);
+        if(ataqueAleatorio == 0) { animator.SetTrigger("attack1"); }
+        else { animator.SetTrigger("attack2"); }
+        
+
+        yield return new WaitForSeconds(1.1f); // Duración del ataque
+
+        // Girar hacia el jugador para evitar bugs
+        Vector3 direccion = jugador.position - transform.position;
+        Quaternion rotacionObjetivo = Quaternion.LookRotation(direccion);
+
+        float tiempoRotacion = 0f;
+        float duracionRotacion = 0.5f;
+
+        while (tiempoRotacion < duracionRotacion)
+        {
+            tiempoRotacion += Time.deltaTime;
+            transform.rotation = Quaternion.Slerp(transform.rotation, rotacionObjetivo, tiempoRotacion / duracionRotacion);
+            yield return null;
+        }
+
+        transform.rotation = rotacionObjetivo;
+
+        navAgent.isStopped = false; // Reanudar el movimiento
+        atacando = false;
+
+        // Después de atacar, seguir persiguiendo al jugador
+        navAgent.SetDestination(jugador.position);
     }
 }
