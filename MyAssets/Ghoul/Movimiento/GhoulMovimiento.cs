@@ -6,7 +6,7 @@ using UnityEngine.AI;
 public class GhoulMovimiento : MonoBehaviour
 {
     public Transform[] puntosPatrulla;
-    private float velocidad = 5f;
+    private float velocidad = 6f;
     public NavMeshAgent navAgent;
     private float tiempoEspera = 5f;
 
@@ -20,7 +20,7 @@ public class GhoulMovimiento : MonoBehaviour
     private float anguloVision = 140f; // Ángulo del campo de visión del enemigo
     private bool persiguiendo = false;
 
-    private float distanciaAtaque = 2.5f; // Distancia a la que ataca al jugador
+    private float distanciaAtaque = 3f; // Distancia a la que ataca al jugador
     private bool atacando = false;
 
     void Start()
@@ -132,21 +132,21 @@ public class GhoulMovimiento : MonoBehaviour
     {
         atacando = true;
         navAgent.isStopped = true; // Detener al enemigo mientras ataca
-        Debug.Log("ATACANDO AL JUGADOR");
         // Activar animación de ataque
         int ataqueAleatorio = Random.Range(0, 2);
         if(ataqueAleatorio == 0) { animator.SetTrigger("attack1"); }
         else { animator.SetTrigger("attack2"); }
         
 
-        yield return new WaitForSeconds(1.1f); // Duración del ataque
+        yield return new WaitForSeconds(0.9f); // Duración del ataque
+        animator.SetBool("run", false);
 
         // Girar hacia el jugador para evitar bugs
         Vector3 direccion = jugador.position - transform.position;
         Quaternion rotacionObjetivo = Quaternion.LookRotation(direccion);
 
         float tiempoRotacion = 0f;
-        float duracionRotacion = 0.5f;
+        float duracionRotacion = 0.4f;
 
         while (tiempoRotacion < duracionRotacion)
         {
@@ -155,6 +155,7 @@ public class GhoulMovimiento : MonoBehaviour
             yield return null;
         }
 
+        animator.SetBool("run", true);
         transform.rotation = rotacionObjetivo;
 
         navAgent.isStopped = false; // Reanudar el movimiento
