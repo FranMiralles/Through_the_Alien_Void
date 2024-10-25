@@ -132,36 +132,42 @@ public class GhoulMovimiento : MonoBehaviour
     {
         atacando = true;
         navAgent.isStopped = true; // Detener al enemigo mientras ataca
-        // Activar animación de ataque
-        int ataqueAleatorio = Random.Range(0, 2);
-        if(ataqueAleatorio == 0) { animator.SetTrigger("attack1"); }
-        else { animator.SetTrigger("attack2"); }
         
 
-        yield return new WaitForSeconds(0.9f); // Duración del ataque
+        // Activar animación de ataque
+        int ataqueAleatorio = Random.Range(0, 2);
+        if (ataqueAleatorio == 0) { animator.SetTrigger("attack1"); }
+        else { animator.SetTrigger("attack2"); }
+
+        // Duración del ataque
+        yield return new WaitForSeconds(1.1f);
         animator.SetBool("run", false);
 
-        // Girar hacia el jugador para evitar bugs
+        // Calcular la rotación hacia el jugador
         Vector3 direccion = jugador.position - transform.position;
         Quaternion rotacionObjetivo = Quaternion.LookRotation(direccion);
 
-        float tiempoRotacion = 0f;
-        float duracionRotacion = 0.4f;
-
-        while (tiempoRotacion < duracionRotacion)
+        // Calcular el ángulo de rotación necesario
+        float angulo = Quaternion.Angle(transform.rotation, rotacionObjetivo);
+        if(angulo > 150)
         {
-            tiempoRotacion += Time.deltaTime;
-            transform.rotation = Quaternion.Slerp(transform.rotation, rotacionObjetivo, tiempoRotacion / duracionRotacion);
-            yield return null;
+            // Calcular la duración del giro en función del ángulo (0.9s para 360º)
+            float duracionRotacion = (angulo / 360f) * 0.9f;
+
+            float tiempoRotacion = 0f;
+            while (tiempoRotacion < duracionRotacion)
+            {
+                tiempoRotacion += Time.deltaTime;
+                transform.rotation = Quaternion.Slerp(transform.rotation, rotacionObjetivo, tiempoRotacion / duracionRotacion);
+                yield return null;
+            }
+            transform.rotation = rotacionObjetivo;
         }
-
-        animator.SetBool("run", true);
-        transform.rotation = rotacionObjetivo;
-
-        navAgent.isStopped = false; // Reanudar el movimiento
-        atacando = false;
 
         // Después de atacar, seguir persiguiendo al jugador
         navAgent.SetDestination(jugador.position);
+        animator.SetBool("run", true);
+        navAgent.isStopped = false;
+        atacando = false;
     }
 }

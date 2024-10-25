@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class CharController : MonoBehaviour {
 
-	public float speed = 10.0f;
+	private float speed = 8f;
 	public float sensitivity = 30.0f;
 	public float WaterHeight = 15.5f;
 	CharacterController character;
