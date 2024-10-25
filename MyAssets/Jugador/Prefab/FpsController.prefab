@@ -11,8 +11,8 @@ GameObject:
   - component: {fileID: 4401734294485400}
   - component: {fileID: 20216315665865056}
   - component: {fileID: 114817242949399776}
-  - component: {fileID: 7970123834096068495}
-  m_Layer: 0
+  - component: {fileID: 6670108453205878071}
+  m_Layer: 3
   m_Name: Camera
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -98,7 +98,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   profile: {fileID: 11400000, guid: 29ac70c6bc481c64fb76807cbc16dc82, type: 2}
---- !u!81 &7970123834096068495
+--- !u!81 &6670108453205878071
 AudioListener:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -119,7 +119,7 @@ GameObject:
   - component: {fileID: 23018308313065750}
   - component: {fileID: 143062276123960700}
   - component: {fileID: 114384212370659330}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: FpsController
   m_TagString: Player
   m_Icon: {fileID: 0}
@@ -230,8 +230,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3bb437ea03db2934088899a110638699, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 10
-  sensitivity: 30
+  sensitivity: 45
   WaterHeight: 15.5
   cam: {fileID: 1198389065402468}
   webGLRightClickRotation: 1
