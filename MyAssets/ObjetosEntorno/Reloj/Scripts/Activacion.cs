@@ -6,7 +6,7 @@ using UnityEngine.UI;
 public class Activacion : MonoBehaviour
 {
     public Text timerText;
-    private float countdownTime = 10;
+    private float countdownTime = 50;
     private bool isRunning = false;
     private Collider soundRange;
 

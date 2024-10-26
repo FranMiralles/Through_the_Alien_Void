@@ -8,12 +8,13 @@ public class Vida : MonoBehaviour
 {
     public Image bloodyEfectImage;
 
+    private float maxHealth = 100;
     private float health;
     private float r, g, b, a, d;
 
     void Start()
     {
-        health = 100;
+        health = maxHealth;
         r = bloodyEfectImage.color.r;
         g = bloodyEfectImage.color.g;
         b = bloodyEfectImage.color.b;

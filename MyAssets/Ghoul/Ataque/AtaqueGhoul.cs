@@ -12,7 +12,10 @@ public class AtaqueGhoul : MonoBehaviour
         {
             contador += 1;
             Debug.Log("Dañado " + contador);
-            
+            Vida vidaScript = other.gameObject.GetComponent<Vida>();
+            vidaScript.damage(10);
+
+
         }
     }
 }
