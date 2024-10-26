@@ -232,13 +232,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3bb437ea03db2934088899a110638699, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  sensitivity: 45
-  WaterHeight: 15.5
   cam: {fileID: 1198389065402468}
   webGLRightClickRotation: 1
-  minY: -90
-  maxY: 90
-  jumpingForce: 20
 --- !u!114 &8506080303262426943
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -274,6 +269,4 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 0}
   colorNoSeleccionado: {r: 0, g: 0, b: 0, a: 0}
-  objetosStackeables:
-  - Medicamento
   textoLleno: {fileID: 0}

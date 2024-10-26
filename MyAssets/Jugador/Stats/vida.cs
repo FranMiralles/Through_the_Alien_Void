@@ -39,7 +39,7 @@ public class Vida : MonoBehaviour
     { 
         if (cure > (100 - health)) health = 100;
         else health += cure;
-        a = (float) health / 100;
+        a = (float)1 - (health / 100);
         Math.Clamp(a,0,1f);
         changeColor();
     }
