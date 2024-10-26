@@ -199,7 +199,7 @@ public class ItemInventario
 
     public bool UsarItem(GameObject inventario)
     {
-        if (nombre == "Medicamento") inventario.gameObject.GetComponent<Vida>().heal(25);
+        if (nombre == "Medicamento") inventario.gameObject.GetComponent<Vida>().heal(50);
         Debug.Log("Ando usando el item:" + nombre);
         this.cantidad -= 1;
         if (this.cantidad == 0) return true;

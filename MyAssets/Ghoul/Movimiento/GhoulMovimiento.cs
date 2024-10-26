@@ -6,7 +6,7 @@ using UnityEngine.AI;
 public class GhoulMovimiento : MonoBehaviour
 {
     public Transform[] puntosPatrulla;
-    private float velocidad = 6f;
+    private float velocidad = 5.5f;
     private NavMeshAgent navAgent;
     private float tiempoEspera = 8f;
 
