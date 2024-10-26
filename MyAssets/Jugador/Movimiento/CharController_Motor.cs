@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -18,6 +19,8 @@ public class CharController : MonoBehaviour {
 	public float maxY = 90f;  // Límite superior (mirar hacia arriba)
 	private float currentRotationX = 0f;
 	public int jumpingForce = 20;
+	private Camaras camarasScript;
+	private Boolean camPlayer = true;
 
 
 	void Start(){
@@ -27,6 +30,7 @@ public class CharController : MonoBehaviour {
 			webGLRightClickRotation = false;
 			sensitivity = sensitivity * 1.5f;
 		}
+		camarasScript = FindObjectOfType<Camaras>();
 	}
 
 
@@ -78,6 +82,16 @@ public class CharController : MonoBehaviour {
 			Vector3 directionJump = new Vector3(0, 1, 0);
 			character.Move(jumpingForce * directionJump * Time.deltaTime);
 		}
+
+        if (Input.GetKey(KeyCode.C) && camPlayer) {
+            camarasScript.cambiarCamara();
+			camPlayer = !camPlayer;
+        }
+
+		if (Input.GetKey(KeyCode.C) && !camPlayer) {
+            camarasScript.volverMainCam();
+			camPlayer = !camPlayer;
+        }
 	}
 
 

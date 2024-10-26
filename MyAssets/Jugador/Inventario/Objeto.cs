@@ -6,10 +6,10 @@ using TMPro;
 public class Objeto : MonoBehaviour
 {
     private Inventario inventario; // Referencia al script Inventario
-    public Sprite iconoItem; // Icono del objeto a añadir
+    public Sprite iconoItem; // Icono del objeto a aï¿½adir
     public string nombreItem = "Llave";
-    private bool jugadorCerca = false; // Controla si el jugador está cerca del objeto
-    private static TextMeshProUGUI TextoRecoger; // Texto global, estático para toda la escena
+    private bool jugadorCerca = false; // Controla si el jugador estï¿½ cerca del objeto
+    private static TextMeshProUGUI TextoRecoger; // Texto global, estï¿½tico para toda la escena
 
     private void Start()
     {
@@ -20,7 +20,7 @@ public class Objeto : MonoBehaviour
             TextoRecoger = GameObject.FindGameObjectWithTag("TextoRecoger").GetComponent<TextMeshProUGUI>();
         }
 
-        // Asegúrate de que el texto esté desactivado al inicio.
+        // Asegï¿½rate de que el texto estï¿½ desactivado al inicio.
         if (TextoRecoger != null)
         {
             TextoRecoger.gameObject.SetActive(false); // Inicialmente desactivado
@@ -36,11 +36,11 @@ public class Objeto : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
-            jugadorCerca = true; // Indica que el jugador está cerca.
+            jugadorCerca = true; // Indica que el jugador estï¿½ cerca.
 
             if (TextoRecoger != null)
             {
-                TextoRecoger.text = "Pulsa E para recoger " + nombreItem; // Cambia el texto según el objeto
+                TextoRecoger.text = "Pulsa E para recoger " + nombreItem; // Cambia el texto segï¿½n el objeto
                 TextoRecoger.gameObject.SetActive(true); // Activa el texto cuando el jugador entra.
                 //Debug.Log("Jugador cerca, texto activado.");
             }
@@ -63,16 +63,16 @@ public class Objeto : MonoBehaviour
 
     private void Update()
     {
-        // Solo ejecuta el siguiente código si el jugador está cerca
+        // Solo ejecuta el siguiente cï¿½digo si el jugador estï¿½ cerca
         if (jugadorCerca && Input.GetKeyDown(KeyCode.E))
         {
-            Recoger(); // Llama a la función Recoger cuando el jugador presiona E.
+            Recoger(); // Llama a la funciï¿½n Recoger cuando el jugador presiona E.
         }
     }
 
     private void Recoger()
     {
-        // Creamos un ítem con el nombre e icono del objeto.
+        // Creamos un ï¿½tem con el nombre e icono del objeto.
         ItemInventario nuevoItem = new ItemInventario(nombreItem, iconoItem);
 
         if (inventario.AddToInventory(nuevoItem)) 
@@ -80,7 +80,7 @@ public class Objeto : MonoBehaviour
             // Desactiva el texto al recoger el objeto.
             if (TextoRecoger != null)
             {
-                TextoRecoger.gameObject.SetActive(false); // Desactiva el texto después de recoger.
+                TextoRecoger.gameObject.SetActive(false); // Desactiva el texto despuï¿½s de recoger.
                 //Debug.Log("Objeto recogido, texto desactivado.");
             }
 
