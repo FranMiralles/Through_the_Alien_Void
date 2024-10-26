@@ -31,7 +31,7 @@ public class Vida : MonoBehaviour
     { 
         if (dmg > health) health = 0;
         else health -= dmg;
-        a = (float) health / 100;
+        a = (float) 1 - (health / 100);
         Math.Clamp(a,0,1f);
         changeColor();
     }
