@@ -5,7 +5,7 @@ using TMPro;
 
 public class Objeto : MonoBehaviour
 {
-    public Inventario inventario; // Referencia al script Inventario
+    private Inventario inventario; // Referencia al script Inventario
     public Sprite iconoItem; // Icono del objeto a añadir
     public string nombreItem = "Llave";
     private bool jugadorCerca = false; // Controla si el jugador está cerca del objeto
@@ -13,6 +13,7 @@ public class Objeto : MonoBehaviour
 
     private void Start()
     {
+        inventario = GameObject.FindWithTag("Player").GetComponent<Inventario>();
         // Si no se ha asignado, busca el objeto de texto en la escena.
         if (TextoRecoger == null)
         {

@@ -11,11 +11,8 @@ public class AtaqueGhoul : MonoBehaviour
         if (other.CompareTag("Player"))
         {
             contador += 1;
-            Debug.Log("Dañado " + contador);
             Vida vidaScript = other.gameObject.GetComponent<Vida>();
-            vidaScript.damage(10);
-
-
+            vidaScript.damage(25);
         }
     }
 }

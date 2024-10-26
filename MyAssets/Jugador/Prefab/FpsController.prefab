@@ -119,6 +119,8 @@ GameObject:
   - component: {fileID: 23018308313065750}
   - component: {fileID: 143062276123960700}
   - component: {fileID: 114384212370659330}
+  - component: {fileID: 8506080303262426943}
+  - component: {fileID: 8821603849019352369}
   m_Layer: 3
   m_Name: FpsController
   m_TagString: Player
@@ -237,3 +239,41 @@ MonoBehaviour:
   minY: -90
   maxY: 90
   jumpingForce: 20
+--- !u!114 &8506080303262426943
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1666093525517832}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ea61477c301201148a1217303a4713e6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  bloodyEfectImage: {fileID: 0}
+--- !u!114 &8821603849019352369
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1666093525517832}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 17f0d07093e535941ac0912f67d00f25, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  slots:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  colorNoSeleccionado: {r: 0, g: 0, b: 0, a: 0}
+  objetosStackeables:
+  - Medicamento
+  textoLleno: {fileID: 0}

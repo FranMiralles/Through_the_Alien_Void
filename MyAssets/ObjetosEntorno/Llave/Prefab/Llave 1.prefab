@@ -44,10 +44,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 4919794028825649181}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b4434dc78b91ad244b5b875648fba584, type: 3}
+  m_Script: {fileID: 11500000, guid: 1bc2466f6343bbc46885c4aa08a0d623, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  inventario: {fileID: 0}
   iconoItem: {fileID: 21300000, guid: 13c925c9c6716194f9fe832914b37154, type: 3}
   nombreItem: Llave
 --- !u!65 &7814115293223503143
