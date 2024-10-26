@@ -1,15 +1,16 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using TMPro;
 
 public class Objeto : MonoBehaviour
 {
     private Inventario inventario; // Referencia al script Inventario
     public Sprite iconoItem; // Icono del objeto a a�adir
-    public string nombreItem = "Llave";
+    public string nombreItem;
     private bool jugadorCerca = false; // Controla si el jugador est� cerca del objeto
-    private static TextMeshProUGUI TextoRecoger; // Texto global, est�tico para toda la escena
+    private static Text TextoRecoger; // Texto global, est�tico para toda la escena
 
     private void Start()
     {
@@ -17,18 +18,13 @@ public class Objeto : MonoBehaviour
         // Si no se ha asignado, busca el objeto de texto en la escena.
         if (TextoRecoger == null)
         {
-            TextoRecoger = GameObject.FindGameObjectWithTag("TextoRecoger").GetComponent<TextMeshProUGUI>();
+            TextoRecoger = GameObject.FindGameObjectWithTag("TextoRecoger").GetComponent<Text>();
         }
 
         // Aseg�rate de que el texto est� desactivado al inicio.
         if (TextoRecoger != null)
         {
-            TextoRecoger.gameObject.SetActive(false); // Inicialmente desactivado
-            //Debug.Log("TextoRecoger encontrado y desactivado.");
-        }
-        else
-        {
-            //Debug.LogWarning("TextoRecoger no encontrado.");
+            TextoRecoger. enabled = false; // Inicialmente desactivado
         }
     }
 
@@ -41,8 +37,7 @@ public class Objeto : MonoBehaviour
             if (TextoRecoger != null)
             {
                 TextoRecoger.text = "Pulsa E para recoger " + nombreItem; // Cambia el texto seg�n el objeto
-                TextoRecoger.gameObject.SetActive(true); // Activa el texto cuando el jugador entra.
-                //Debug.Log("Jugador cerca, texto activado.");
+                TextoRecoger.enabled = true; // Activa el texto cuando el jugador entra.
             }
         }
     }
@@ -55,8 +50,7 @@ public class Objeto : MonoBehaviour
 
             if (TextoRecoger != null)
             {
-                TextoRecoger.gameObject.SetActive(false); // Desactiva el texto cuando el jugador sale.
-                //Debug.Log("Jugador lejos, texto desactivado.");
+                TextoRecoger.enabled = false; // Desactiva el texto cuando el jugador sale.
             }
         }
     }
@@ -80,7 +74,7 @@ public class Objeto : MonoBehaviour
             // Desactiva el texto al recoger el objeto.
             if (TextoRecoger != null)
             {
-                TextoRecoger.gameObject.SetActive(false); // Desactiva el texto despu�s de recoger.
+                TextoRecoger.enabled = false; // Desactiva el texto despu�s de recoger.
                 //Debug.Log("Objeto recogido, texto desactivado.");
             }
 

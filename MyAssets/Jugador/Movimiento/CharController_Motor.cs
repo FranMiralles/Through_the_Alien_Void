@@ -6,8 +6,8 @@ using UnityEngine;
 public class CharController : MonoBehaviour {
 
 	private float speed = 8f;
-	public float sensitivity = 30.0f;
-	public float WaterHeight = 15.5f;
+	private float sensitivity = 30.0f;
+	private float WaterHeight = 15.5f;
 	CharacterController character;
 	public GameObject cam;
 	float moveFB, moveLR;
@@ -15,8 +15,8 @@ public class CharController : MonoBehaviour {
 	public bool webGLRightClickRotation = true;
 	float gravity = -9.8f;
 
-	public float minY = -90f; // Límite inferior (mirar hacia abajo)
-	public float maxY = 90f;  // Límite superior (mirar hacia arriba)
+	private float minY = -90f; // Límite inferior (mirar hacia abajo)
+	private float maxY = 90f;  // Límite superior (mirar hacia arriba)
 	private float currentRotationX = 0f;
 	public int jumpingForce = 20;
 	private Camaras camarasScript;
@@ -25,6 +25,7 @@ public class CharController : MonoBehaviour {
 
 	void Start(){
 		//LockCursor ();
+		Cursor.visible = false;
 		character = GetComponent<CharacterController> ();
 		if (Application.isEditor) {
 			webGLRightClickRotation = false;

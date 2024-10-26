@@ -7,22 +7,22 @@ using UnityEngine.UI;
 
 public class Inventario : MonoBehaviour
 {
-    private List<ItemInventario> inventraio;
+    private List<ItemInventario> inventario;
     public List<Image> slots;
     //public Color colorSeleccionado = Color.white; // Color para el borde de selección
     public Color colorNoSeleccionado = Color.clear; // Color para los slots no seleccionados
     private int indexSeleccionado = 0; // Empezar con el primer item seleccionado
 
     // Lista de objetos stackeables 
-    public List<string> objetosStackeables = new List<string> { "Medicamento" };
+    private List<string> objetosStackeables = new List<string> { "Pila", "Medicamento" };
 
     // Referencia al texto de "Inventario lleno"
-    public TextMeshProUGUI textoLleno;  
+    public Text textoLleno;  
 
     private void Start()
     {
-        inventraio = new List<ItemInventario>();
-        ActualizarInventraio();
+        inventario = new List<ItemInventario>();
+        ActualizarInventario();
 
         // Asegurarse de que el texto de "Inventario lleno" esté desactivado al inicio
         
@@ -38,10 +38,8 @@ public class Inventario : MonoBehaviour
     public bool AddToInventory(ItemInventario newItem)
     {
         // Comprobar si el inventario está lleno
-        //Debug.Log(inventraio.Count);
-        if (inventraio.Count == 8)
+        if (inventario.Count == 8)
         {
-            //Debug.Log("Inventario lleno");
             // Activar el texto de "Inventario lleno" durante 2 segundos
             StartCoroutine(MostrarTextoLleno());
             
@@ -49,13 +47,12 @@ public class Inventario : MonoBehaviour
         }
 
         // Comprobar si el objeto ya existe en el inventario
-        ItemInventario existe = inventraio.Find(item => item.nombre == newItem.nombre);
+        ItemInventario existe = inventario.Find(item => item.nombre == newItem.nombre);
 
         if (existe == null)
         {
             // Si no existe y hay espacio, añadirlo como nuevo objeto
-            inventraio.Add(newItem);
-            //Debug.Log(newItem.nombre + " añadido al inventario.");
+            inventario.Add(newItem);
         }
         else
         {
@@ -63,16 +60,11 @@ public class Inventario : MonoBehaviour
             if (EsStackeable(newItem.nombre))
             {
                 existe.cantidad += newItem.cantidad;
-                //Debug.Log(newItem.nombre + " stackeado. Cantidad actual: " + existe.cantidad);
-            }
-            else
-            {
-                //Debug.Log("El objeto ya está en el inventario y no es stackeable.");
             }
         }
 
         // Actualizamos la interfaz del inventario para reflejar el cambio de cantidad
-        ActualizarInventraio();
+        ActualizarInventario();
         return true;
     }
 
@@ -85,14 +77,32 @@ public class Inventario : MonoBehaviour
     public void Update()
     {
         CambiarSeleccion();
+        if (Input.GetButtonDown("Fire1"))
+        {
+            if (indexSeleccionado != -1)
+            {
+                bool eliminar = inventario[indexSeleccionado].UsarItem(this.gameObject);
+                if (eliminar) {
+                    inventario.RemoveAt(indexSeleccionado);
+                    ActualizarInventario();
+                }
+            }
+        }
     }
 
     private void CambiarSeleccion()
     {
-        if (inventraio.Count == 0)
+        if (inventario.Count == 0)
         {
             indexSeleccionado = -1; // No hay selección si el inventario está vacío
-            ActualizarInventraio();
+            ActualizarInventario();
+            return;
+        }
+
+        if (inventario.Count == 1)
+        {
+            indexSeleccionado = 0; // No hay selección si el inventario está vacío
+            ActualizarInventario();
             return;
         }
 
@@ -103,28 +113,27 @@ public class Inventario : MonoBehaviour
         {
             // Mover hacia la derecha
             indexSeleccionado++;
-            if (indexSeleccionado >= inventraio.Count) indexSeleccionado = 0; // Circular
-            ActualizarInventraio();
+            if (indexSeleccionado >= inventario.Count) indexSeleccionado = 0; // Circular
+            ActualizarInventario();
         }
         else if (scroll < 0f)
         {
             // Mover hacia la izquierda
             indexSeleccionado--;
-            if (indexSeleccionado < 0) indexSeleccionado = inventraio.Count - 1; // Circular
-            ActualizarInventraio();
+            if (indexSeleccionado < 0) indexSeleccionado = inventario.Count - 1; // Circular
+            ActualizarInventario();
         }
-
-        //ActualizarInventraio();
     }
 
-    private void ActualizarInventraio()
+    private void ActualizarInventario()
     {
         for (int i = 0; i < slots.Count; i++)
         {
-            if (i < inventraio.Count)
+            TextMeshProUGUI cantidadTexto = slots[i].transform.Find("Cantidad").GetComponent<TextMeshProUGUI>();
+            if (i < inventario.Count)
             {
                 // Mostrar el icono del objeto en el slot
-                slots[i].sprite = inventraio[i].icono;
+                slots[i].sprite = inventario[i].icono;
                 slots[i].enabled = true; // Activa el slot cuando tiene un ítem
 
                 // Obtener el componente Outline del slot
@@ -133,29 +142,21 @@ public class Inventario : MonoBehaviour
                 // Establecer el borde solo si el slot está seleccionado
                 outline.enabled = i == indexSeleccionado;
 
-                // Obtener el componente TextMeshProUGUI asociado al slot para mostrar la cantidad
-                Transform cantidadTextoTransform = slots[i].transform.Find("Cantidad");
-                if (cantidadTextoTransform != null)
+                // Obtener el componente TextMeshswdaProUGUI asociado al slot para mostrar la cantidad
+                if (cantidadTexto != null)
                 {
-                    TextMeshProUGUI cantidadTexto = cantidadTextoTransform.GetComponent<TextMeshProUGUI>();
-
+                    cantidadTexto.enabled = true;
                     // Actualizar la cantidad siempre que el objeto sea stackeable
                     // y su cantidad sea mayor que 1
-                    if (EsStackeable(inventraio[i].nombre))
+                    if (EsStackeable(inventario[i].nombre))
                     {
-                        cantidadTexto.text = inventraio[i].cantidad.ToString();
+                        cantidadTexto.text = inventario[i].cantidad.ToString();
                         cantidadTexto.gameObject.SetActive(true); // Asegurar que el texto esté activado
-                        //Debug.Log("Mostrando cantidad: " + inventraio[i].cantidad + " en slot " + i);
                     }
                     else
                     {
                         cantidadTexto.gameObject.SetActive(false); // Desactivar el texto si no es necesario
-                        //Debug.Log("Ocultando cantidad en slot " + i);
                     }
-                }
-                else
-                {
-                    //Debug.LogWarning("No se encontró el hijo 'Cantidad' en el slot " + i);
                 }
             }
             else
@@ -163,7 +164,7 @@ public class Inventario : MonoBehaviour
                 // Si no hay ítem en el slot, desactivar el slot
                 slots[i].sprite = null; // Mostrar el slot vacío
                 slots[i].enabled = false; // Desactivar la imagen del slot vacío
-
+                cantidadTexto.enabled = false;
                 // Asegurarse de que el Outline esté desactivado
                 Outline outline = slots[i].GetComponent<Outline>();
                 if (outline != null)
@@ -194,5 +195,14 @@ public class ItemInventario
         this.nombre = nombre;
         this.icono = icono;
         this.cantidad = 1;
+    }
+
+    public bool UsarItem(GameObject inventario)
+    {
+        if (nombre == "Medicamento") inventario.gameObject.GetComponent<Vida>().heal(25);
+        Debug.Log("Ando usando el item:" + nombre);
+        this.cantidad -= 1;
+        if (this.cantidad == 0) return true;
+        return false;
     }
 }
