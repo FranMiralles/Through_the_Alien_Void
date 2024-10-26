@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 4401734294485400}
   - component: {fileID: 20216315665865056}
   - component: {fileID: 114817242949399776}
-  - component: {fileID: 6670108453205878071}
+  - component: {fileID: 306969634025274388}
   m_Layer: 3
   m_Name: Camera
   m_TagString: Untagged
@@ -98,7 +98,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   profile: {fileID: 11400000, guid: 29ac70c6bc481c64fb76807cbc16dc82, type: 2}
---- !u!81 &6670108453205878071
+--- !u!81 &306969634025274388
 AudioListener:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

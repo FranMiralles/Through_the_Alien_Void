@@ -7,8 +7,8 @@ public class GhoulMovimiento : MonoBehaviour
 {
     public Transform[] puntosPatrulla;
     private float velocidad = 6f;
-    public NavMeshAgent navAgent;
-    private float tiempoEspera = 5f;
+    private NavMeshAgent navAgent;
+    private float tiempoEspera = 8f;
 
     private int indiceActual = 0;
     private bool esperando = false;
@@ -23,9 +23,17 @@ public class GhoulMovimiento : MonoBehaviour
     private float distanciaAtaque = 3f; // Distancia a la que ataca al jugador
     private bool atacando = false;
 
+    private bool enPuntoDeEspera = false;
+
+    // Referencia a las corutinas y flags para activarlas luego de interrumpirlas
+    private Coroutine EsperarYPasarAlSiguienteRef;
+    private Coroutine PerseguirOAtacarRef;
+    private Coroutine GirarHaciaJugadorRef;
+
     void Start()
     {
         animator = GetComponent<Animator>();
+        navAgent = GetComponent < NavMeshAgent>();
         navAgent.speed = velocidad;
 
         if (puntosPatrulla.Length > 0)
@@ -36,14 +44,14 @@ public class GhoulMovimiento : MonoBehaviour
 
     void Update()
     {
-        if (!persiguiendo && !esperando && navAgent.remainingDistance < 0.5f && !navAgent.pathPending)
+        if (!enPuntoDeEspera && !persiguiendo && !esperando && navAgent.remainingDistance < 0.5f && !navAgent.pathPending)
         {
-            StartCoroutine(EsperarYPasarAlSiguiente());
+            EsperarYPasarAlSiguienteRef = StartCoroutine(EsperarYPasarAlSiguiente());
         }
 
-        if ((JugadorEnCampoDeVision() && JugadorVisible()) || persiguiendo)
+        if (!enPuntoDeEspera && ((JugadorEnCampoDeVision() && JugadorVisible()) || persiguiendo))
         {
-            StartCoroutine(PerseguirOAtacar());
+            PerseguirOAtacarRef = StartCoroutine(PerseguirOAtacar());
         }
     }
 
@@ -100,7 +108,7 @@ public class GhoulMovimiento : MonoBehaviour
         transform.rotation = rotacionObjetivo;
 
         yield return new WaitForSeconds(tiempoEspera);
-        if (!persiguiendo)
+        if (!persiguiendo && !enPuntoDeEspera)
         {
             animator.SetBool("run", true);
             navAgent.SetDestination(puntosPatrulla[indiceActual].position);
@@ -110,6 +118,9 @@ public class GhoulMovimiento : MonoBehaviour
 
     IEnumerator PerseguirOAtacar()
     {
+        // En caso de ser alterado, que no ataque
+        if (enPuntoDeEspera) yield break;
+
         persiguiendo = true;
         animator.SetBool("run", true);
         navAgent.stoppingDistance = distanciaAtaque - 1;
@@ -128,11 +139,32 @@ public class GhoulMovimiento : MonoBehaviour
         yield return null;
     }
 
+    IEnumerator GirarHaciaObjetivo(Transform objetivo, float velocidadGiro)
+    {
+        while (true)
+        {
+            // Calcula la dirección y la rotación objetivo hacia el jugador
+            Vector3 direccion = objetivo.position - transform.position;
+            Quaternion rotacionObjetivo = Quaternion.LookRotation(direccion);
+
+            // Calcula el ángulo de diferencia
+            float angulo = Quaternion.Angle(transform.rotation, rotacionObjetivo);
+
+            // Si el ángulo es suficientemente pequeño, detiene la corrutina
+            if (angulo < 20f)
+                yield break;
+            
+            transform.rotation = Quaternion.Slerp(transform.rotation, rotacionObjetivo, velocidadGiro * Time.deltaTime);
+
+            yield return null;
+        }
+    }
+
     IEnumerator Atacar()
     {
         atacando = true;
         navAgent.isStopped = true; // Detener al enemigo mientras ataca
-        
+
 
         // Activar animación de ataque
         int ataqueAleatorio = Random.Range(0, 2);
@@ -140,34 +172,62 @@ public class GhoulMovimiento : MonoBehaviour
         else { animator.SetTrigger("attack2"); }
 
         // Duración del ataque
-        yield return new WaitForSeconds(1.1f);
+        if(!enPuntoDeEspera) GirarHaciaJugadorRef = StartCoroutine(GirarHaciaObjetivo(jugador, 5f));
+        yield return new WaitForSeconds(1.2f);
         animator.SetBool("run", false);
 
-        // Calcular la rotación hacia el jugador
-        Vector3 direccion = jugador.position - transform.position;
-        Quaternion rotacionObjetivo = Quaternion.LookRotation(direccion);
+        // Después de atacar, seguir persiguiendo al jugador
+        navAgent.isStopped = false;
+        navAgent.SetDestination(jugador.position);
+        atacando = false;
+    }
 
-        // Calcular el ángulo de rotación necesario
-        float angulo = Quaternion.Angle(transform.rotation, rotacionObjetivo);
-        if(angulo > 150)
+    // Lanzador de la corutina mediante otro script
+    public void DistraerLlamada(Transform puntoEspera)
+    {
+        enPuntoDeEspera = true;
+        StartCoroutine(EsperarFinDeAtaque(puntoEspera));
+    }
+
+    private IEnumerator EsperarFinDeAtaque(Transform puntoEspera)
+    {
+        // Espera a que la corutina de atacar termine
+        while (atacando)
         {
-            // Calcular la duración del giro en función del ángulo (0.9s para 360º)
-            float duracionRotacion = (angulo / 360f) * 0.9f;
-
-            float tiempoRotacion = 0f;
-            while (tiempoRotacion < duracionRotacion)
-            {
-                tiempoRotacion += Time.deltaTime;
-                transform.rotation = Quaternion.Slerp(transform.rotation, rotacionObjetivo, tiempoRotacion / duracionRotacion);
-                yield return null;
-            }
-            transform.rotation = rotacionObjetivo;
+            yield return null; // Espera un frame
         }
 
-        // Después de atacar, seguir persiguiendo al jugador
-        navAgent.SetDestination(jugador.position);
+        // Ahora puedes comenzar la distracción
+        if (GirarHaciaJugadorRef != null) StopCoroutine(GirarHaciaJugadorRef);
+        if (EsperarYPasarAlSiguienteRef != null) StopCoroutine(EsperarYPasarAlSiguienteRef);
+        if (PerseguirOAtacarRef != null) StopCoroutine(PerseguirOAtacarRef);
+        StartCoroutine(Distraer(puntoEspera));
+    }
+
+    IEnumerator Distraer(Transform puntoDeEspera)
+    {
         animator.SetBool("run", true);
-        navAgent.isStopped = false;
-        atacando = false;
+
+        StartCoroutine(GirarHaciaObjetivo(puntoDeEspera, 120f));
+
+        navAgent.SetDestination(puntoDeEspera.position);
+        navAgent.stoppingDistance = 2;
+
+        while (Vector3.Distance(transform.position, puntoDeEspera.position) >= 2.1f)
+        {
+            yield return null;
+        }
+
+        animator.SetBool("run", false);
+        yield return new WaitForSeconds(15f);
+
+        enPuntoDeEspera = false;
+        navAgent.stoppingDistance = 0;
+
+        // Volver a patrullar
+        animator.SetBool("run", true);
+        navAgent.SetDestination(puntosPatrulla[indiceActual].position);
+        esperando = false;
+        persiguiendo = false;
     }
 }
