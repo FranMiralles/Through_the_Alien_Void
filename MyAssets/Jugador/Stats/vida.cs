@@ -10,7 +10,7 @@ public class Vida : MonoBehaviour
 
     private float maxHealth = 100;
     private float health;
-    private float r, g, b, a, d;
+    private float r, g, b, a, dmg;
 
     void Start()
     {
@@ -19,17 +19,6 @@ public class Vida : MonoBehaviour
         g = bloodyEfectImage.color.g;
         b = bloodyEfectImage.color.b;
         a = 0f;
-        d = 100 - health;
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        if (health != 100) {
-            a = 1 - (0.01f * (d));
-        }
-        Math.Clamp(a,0,1f);
-        changeColor();
     }
 
     private void changeColor()
@@ -42,10 +31,16 @@ public class Vida : MonoBehaviour
     { 
         if (dmg > health) health = 0;
         else health -= dmg;
+        a = (float) health / 100;
+        Math.Clamp(a,0,1f);
+        changeColor();
     }
-    public void heal(float h) 
+    public void heal(float cure) 
     { 
-        if (h > (100 - health)) health = 100;
-        else health += h;
+        if (cure > (100 - health)) health = 100;
+        else health += cure;
+        a = (float) health / 100;
+        Math.Clamp(a,0,1f);
+        changeColor();
     }
 }
