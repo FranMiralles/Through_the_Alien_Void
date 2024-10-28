@@ -199,9 +199,34 @@ public class ItemInventario
 
     public bool UsarItem(GameObject inventario)
     {
-        if (nombre == "Medicamento") inventario.gameObject.GetComponent<Vida>().heal(50);
-        Debug.Log("Ando usando el item:" + nombre);
-        this.cantidad -= 1;
+        bool consumir = false;
+        if (nombre == "Medicamento")
+        {
+            inventario.gameObject.GetComponent<Vida>().heal(50);
+            consumir = true;
+        }
+        if (nombre == "Pila")
+        {
+            // Buscar todos los objetos con el script Activacion en el rango del jugador
+            Collider[] colliders = Physics.OverlapSphere(inventario.transform.position, 2f); // 5f es el rango de acción
+
+            foreach (var collider in colliders)
+            {
+                if(collider.gameObject.transform.parent != null && collider.gameObject.transform.parent.CompareTag("Reloj"))
+                {
+                    Activacion[] activacionScripts = collider.gameObject.transform.parent.GetComponentsInChildren<Activacion>();
+                    foreach (var activacionScript in activacionScripts)
+                    {
+                        if (activacionScript != null)
+                        {
+                            activacionScript.StartTimer();
+                            consumir = true;
+                        }
+                    }
+                }
+            }
+        }
+        if(consumir) this.cantidad -= 1;
         if (this.cantidad == 0) return true;
         return false;
     }

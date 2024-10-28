@@ -14,7 +14,7 @@ public class Activacion : MonoBehaviour
     {
         soundRange = this.GetComponent<BoxCollider>();
         soundRange.enabled = false;
-        StartTimer();
+        //StartTimer();
     }
 
     public void StartTimer()
@@ -40,6 +40,7 @@ public class Activacion : MonoBehaviour
 
         timerText.text = "00:00";
         isRunning = false;
+        countdownTime = 15;
         soundRange.enabled = true;
         yield return new WaitForSeconds(1f);
         soundRange.enabled = false;
