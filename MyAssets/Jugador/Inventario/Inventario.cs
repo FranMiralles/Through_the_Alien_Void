@@ -17,7 +17,7 @@ public class Inventario : MonoBehaviour
     private List<string> objetosStackeables = new List<string> { "Pila", "Medicamento" };
 
     // Referencia al texto de "Inventario lleno"
-    public Text textoLleno;  
+    public Text textoLleno;
 
     private void Start()
     {
@@ -208,7 +208,7 @@ public class ItemInventario
         if (nombre == "Pila")
         {
             // Buscar todos los objetos con el script Activacion en el rango del jugador
-            Collider[] colliders = Physics.OverlapSphere(inventario.transform.position, 2f); // 5f es el rango de acción
+            Collider[] colliders = Physics.OverlapSphere(inventario.transform.position, 2.2f); // 5f es el rango de acción
 
             foreach (var collider in colliders)
             {
@@ -219,8 +219,12 @@ public class ItemInventario
                     {
                         if (activacionScript != null)
                         {
-                            activacionScript.StartTimer();
-                            consumir = true;
+                            consumir = activacionScript.StartTimer();
+                            if (consumir)
+                            {
+                                Text TextoRecoger = GameObject.FindGameObjectWithTag("TextoRecoger").GetComponent<Text>();
+                                TextoRecoger.text = "Reloj en funcionamiento";
+                            }
                         }
                     }
                 }

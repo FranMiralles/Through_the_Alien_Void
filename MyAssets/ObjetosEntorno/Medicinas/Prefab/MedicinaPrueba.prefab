@@ -97,7 +97,7 @@ GameObject:
   - component: {fileID: 4451016079475099878}
   m_Layer: 0
   m_Name: MedicinaPrueba
-  m_TagString: Untagged
+  m_TagString: Objeto
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -137,8 +137,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 0.5, y: 0.5, z: 0.5}
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Size: {x: 0.05764219, y: 0.084143214, z: 0.055843957}
+  m_Center: {x: 0.0017028414, y: 0.04085302, z: -0.0007458909}
 --- !u!54 &6445748808178536376
 Rigidbody:
   m_ObjectHideFlags: 0

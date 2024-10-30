@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 7324234429329994412}
   m_Layer: 0
   m_Name: Pila
-  m_TagString: Untagged
+  m_TagString: Objeto
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -54,8 +54,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 0.5, y: 0.5, z: 0.5}
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Size: {x: 0.025106069, y: 0.04420666, z: 0.026615214}
+  m_Center: {x: -0.00050882867, y: 0.0047894237, z: -0.000488594}
 --- !u!54 &7047396270438724876
 Rigidbody:
   m_ObjectHideFlags: 0

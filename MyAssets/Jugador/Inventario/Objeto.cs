@@ -28,43 +28,8 @@ public class Objeto : MonoBehaviour
         }
     }
 
-    private void OnTriggerEnter(Collider other)
-    {
-        if (other.CompareTag("Player"))
-        {
-            jugadorCerca = true; // Indica que el jugador est� cerca.
 
-            if (TextoRecoger != null)
-            {
-                TextoRecoger.text = "Pulsa E para recoger " + nombreItem; // Cambia el texto seg�n el objeto
-                TextoRecoger.enabled = true; // Activa el texto cuando el jugador entra.
-            }
-        }
-    }
-
-    private void OnTriggerExit(Collider other)
-    {
-        if (other.CompareTag("Player"))
-        {
-            jugadorCerca = false; // Indica que el jugador ha salido.
-
-            if (TextoRecoger != null)
-            {
-                TextoRecoger.enabled = false; // Desactiva el texto cuando el jugador sale.
-            }
-        }
-    }
-
-    private void Update()
-    {
-        // Solo ejecuta el siguiente c�digo si el jugador est� cerca
-        if (jugadorCerca && Input.GetKeyDown(KeyCode.E))
-        {
-            Recoger(); // Llama a la funci�n Recoger cuando el jugador presiona E.
-        }
-    }
-
-    private void Recoger()
+    public void Recoger()
     {
         // Creamos un �tem con el nombre e icono del objeto.
         ItemInventario nuevoItem = new ItemInventario(nombreItem, iconoItem);

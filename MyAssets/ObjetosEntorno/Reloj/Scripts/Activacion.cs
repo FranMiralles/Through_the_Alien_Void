@@ -5,25 +5,28 @@ using UnityEngine.UI;
 
 public class Activacion : MonoBehaviour
 {
-    public Text timerText;
+    private Text timerText;
     private float countdownTime = 15;
-    private bool isRunning = false;
+    public bool isRunning = false;
     private Collider soundRange;
 
     private void Start()
     {
         soundRange = this.GetComponent<BoxCollider>();
+        timerText = GameObject.FindGameObjectWithTag("ContadorReloj").GetComponent<Text>();
+        if (timerText == null) Debug.Log("PUTA");
         soundRange.enabled = false;
         //StartTimer();
     }
 
-    public void StartTimer()
+    public bool StartTimer()
     {
         if (!isRunning)
         {
-            timerText.gameObject.SetActive(true);
+            timerText.enabled = true;
             StartCoroutine(CountdownCoroutine());
         }
+        return isRunning;
     }
 
     private IEnumerator CountdownCoroutine()
@@ -44,7 +47,7 @@ public class Activacion : MonoBehaviour
         soundRange.enabled = true;
         yield return new WaitForSeconds(1f);
         soundRange.enabled = false;
-        timerText.gameObject.SetActive(false);
+        timerText.enabled = false;
     }
 
     void OnTriggerEnter(Collider other)
@@ -56,5 +59,4 @@ public class Activacion : MonoBehaviour
             if(ghoulMovimientoScript != null) ghoulMovimientoScript.DistraerLlamada(this.transform);
         }
     }
-
 }
