@@ -14,9 +14,7 @@ public class Activacion : MonoBehaviour
     {
         soundRange = this.GetComponent<BoxCollider>();
         timerText = GameObject.FindGameObjectWithTag("ContadorReloj").GetComponent<Text>();
-        if (timerText == null) Debug.Log("PUTA");
         soundRange.enabled = false;
-        //StartTimer();
     }
 
     public bool StartTimer()
