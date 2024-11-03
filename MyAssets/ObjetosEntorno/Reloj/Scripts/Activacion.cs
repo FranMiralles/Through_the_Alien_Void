@@ -19,12 +19,13 @@ public class Activacion : MonoBehaviour
 
     public bool StartTimer()
     {
-        if (!isRunning)
+        if (!isRunning && !timerText.enabled)
         {
             timerText.enabled = true;
             StartCoroutine(CountdownCoroutine());
+            return true;
         }
-        return isRunning;
+        else return false;
     }
 
     private IEnumerator CountdownCoroutine()

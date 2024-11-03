@@ -205,14 +205,13 @@ public class ItemInventario
             inventario.gameObject.GetComponent<Vida>().heal(50);
             consumir = true;
         }
-        if (nombre == "Pila")
+        if (nombre == "Pila" || nombre == "LlaveZona1")
         {
-            // Buscar todos los objetos con el script Activacion en el rango del jugador
-            Collider[] colliders = Physics.OverlapSphere(inventario.transform.position, 2.2f); // 5f es el rango de acción
+            Collider[] colliders = Physics.OverlapSphere(inventario.transform.position, 2.2f);
 
             foreach (var collider in colliders)
             {
-                if(collider.gameObject.transform.parent != null && collider.gameObject.transform.parent.CompareTag("Reloj"))
+                if(collider.gameObject.transform.parent != null && collider.gameObject.transform.parent.CompareTag("Reloj") && nombre == "Pila")
                 {
                     Activacion[] activacionScripts = collider.gameObject.transform.parent.GetComponentsInChildren<Activacion>();
                     foreach (var activacionScript in activacionScripts)
@@ -227,6 +226,18 @@ public class ItemInventario
                             }
                         }
                     }
+                }
+                if (collider.gameObject.transform.CompareTag("Puerta") && nombre == "LlaveZona1")
+                {
+                    Cerradura puertaScript = collider.gameObject.GetComponent<Cerradura>();
+                    if (puertaScript != null)
+                    {
+                        puertaScript.IniciarMinijuego();
+                        Text TextoRecoger = GameObject.FindGameObjectWithTag("TextoRecoger").GetComponent<Text>();
+                        TextoRecoger.text = "Abriendo puerta";
+                        consumir = true;
+                    }
+                    
                 }
             }
         }

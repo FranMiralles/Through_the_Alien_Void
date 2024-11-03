@@ -66,6 +66,18 @@ public class InteraccionObjetos : MonoBehaviour
                 TextoRecoger.enabled = true;
             }
         }
+
+        if (other.CompareTag("Puerta"))
+        {
+            if (TextoRecoger != null)
+            {
+                if (!other.gameObject.GetComponent<AbrirPuerta>().abierta)
+                {
+                    TextoRecoger.text = "Cerrado";
+                    TextoRecoger.enabled = true;
+                }
+            }
+        }
     }
 
     private void OnTriggerExit(Collider other)
@@ -87,6 +99,14 @@ public class InteraccionObjetos : MonoBehaviour
         }
 
         if (other.CompareTag("Reloj"))
+        {
+            if (TextoRecoger != null)
+            {
+                TextoRecoger.enabled = false;
+            }
+        }
+
+        if (other.CompareTag("Puerta"))
         {
             if (TextoRecoger != null)
             {
